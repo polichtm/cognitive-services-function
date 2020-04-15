@@ -14,7 +14,7 @@ public static async Task<IActionResult> Run(HttpRequest request, ILogger log)
     dynamic bodyData = JsonConvert.DeserializeObject(requestBody);
     using (HttpClient client = new HttpClient())
     {
-        client.BaseAddress = new Uri(System.Environment.GetEnvironmentVariable("EndpointUrl", EnvironmentVariableTarget.Process) + "/", UriKind.Absolute);
+        string endpoint = System.Environment.GetEnvironmentVariable("EndpointUrl", EnvironmentVariableTarget.Process); //Use your regional endpoint here, not your personal endpoint
         client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", System.Environment.GetEnvironmentVariable("EndpointKey", EnvironmentVariableTarget.Process));
         string postBody = JsonConvert.SerializeObject(
             new
