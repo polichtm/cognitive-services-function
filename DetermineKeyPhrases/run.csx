@@ -9,12 +9,12 @@ using Microsoft.AspNetCore.Mvc;
 
 public static async Task<IActionResult> Run(HttpRequest request, ILogger log)
 {
-    log.LogInformation("DetermineLanguage function processed a request.");    
+    log.LogInformation("DetermineKeyPhrases function processed a request.");    
     string requestBody = await new StreamReader(request.Body).ReadToEndAsync();
     dynamic bodyData = JsonConvert.DeserializeObject(requestBody);
     using (HttpClient client = new HttpClient())
     {
-        string endpoint = System.Environment.GetEnvironmentVariable("EndpointUrl", EnvironmentVariableTarget.Process) + "text/analytics/v2.0/keyPhrases"; 
+        string endpoint = System.Environment.GetEnvironmentVariable("EndpointUrl", EnvironmentVariableTarget.Process) + "text/analytics/v2.1/keyPhrases"; 
         client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", System.Environment.GetEnvironmentVariable("EndpointKey", EnvironmentVariableTarget.Process));
         string postBody = JsonConvert.SerializeObject(
             new
@@ -30,7 +30,7 @@ public static async Task<IActionResult> Run(HttpRequest request, ILogger log)
                 }
             }
         );
-        HttpResponseMessage response = await client.PostAsync($"keyPhrases", new StringContent(postBody, Encoding.UTF8, "application/json"));
+        HttpResponseMessage response = await client.PostAsync(endpoint, new StringContent(postBody, Encoding.UTF8, "application/json"));
         dynamic result = JsonConvert.DeserializeObject(await response.Content.ReadAsStringAsync());
         string[] keyPhrases = result.documents[0].keyPhrases.ToObject<string[]>();
         return new OkObjectResult(
